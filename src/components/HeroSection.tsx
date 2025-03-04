@@ -86,7 +86,7 @@ const HeroSection = () => {
                 size="lg" 
                 variant="secondary"
                 className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm text-lg transform transition-all hover:scale-105 shadow-xl"
-                onClick={() => window.location.href = '/itinerary'}
+                onClick={() => window.location.href = '/packages'}
               >
                 View Sample Packages
                 <Star className="ml-2 h-5 w-5" />
