@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WorldMapDemo } from "@/components/WorldMapDemo";
 
 // Lazy load heavy components
 const HeroSection = lazy(() => import("@/components/HeroSection"));
@@ -75,6 +76,10 @@ const Index = () => {
         
         <Suspense fallback={<SectionLoader />}>
           <WhyChooseUsSection />
+        </Suspense>
+
+        <Suspense fallback={<SectionLoader />}>
+          <WorldMapDemo />
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>

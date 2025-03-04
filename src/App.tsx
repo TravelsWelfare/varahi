@@ -7,6 +7,7 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { deferThirdPartyLoad } from "@/lib/utils";
 import { ChatDialog } from "@/components/ChatDialog";
+import { ThemeProvider } from "next-themes";
 
 // Lazy load components with prefetch
 const Index = lazy(() => import(/* webpackChunkName: "home" */ "./pages/Index"));
@@ -77,37 +78,39 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            {[
-              { path: "/", element: <Index /> },
-              { path: "/packages", element: <Packages /> },
-              { path: "/packages/:id", element: <PackageDetails /> },
-              { path: "/blog", element: <Blog /> },
-              { path: "/blog/:slug", element: <BlogPost /> },
-              { path: "/contact", element: <Contact /> },
-              { path: "/about", element: <About /> },
-              { path: "/offers", element: <Offers /> },
-              { path: "*", element: <NotFound /> }
-            ].map(({ path, element }) => (
-              <Route
-                key={path}
-                path={path}
-                element={
-                  <Suspense fallback={<LoadingFallback />}>
-                    {element}
-                  </Suspense>
-                }
-              />
-            ))}
-          </Routes>
-          <ChatDialog />
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider attribute="class" defaultTheme="light">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
+              {[
+                { path: "/", element: <Index /> },
+                { path: "/packages", element: <Packages /> },
+                { path: "/packages/:id", element: <PackageDetails /> },
+                { path: "/blog", element: <Blog /> },
+                { path: "/blog/:slug", element: <BlogPost /> },
+                { path: "/contact", element: <Contact /> },
+                { path: "/about", element: <About /> },
+                { path: "/offers", element: <Offers /> },
+                { path: "*", element: <NotFound /> }
+              ].map(({ path, element }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    <Suspense fallback={<LoadingFallback />}>
+                      {element}
+                    </Suspense>
+                  }
+                />
+              ))}
+            </Routes>
+            <ChatDialog />
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };
