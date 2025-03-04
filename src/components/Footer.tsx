@@ -101,9 +101,9 @@ const Footer = () => {
               © {new Date().getFullYear()} Varahi journey. All rights reserved.
             </p>
             <div className="flex items-center mt-4 md:mt-0">
-              <p className="text-sm text-himalaya-600 flex items-center">
+              {/* <p className="text-sm text-himalaya-600 flex items-center">
                 Made with <Heart size={14} className="mx-1 text-red-500" /> by Varahi journey Team
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
