@@ -21,7 +21,7 @@ const PackageDetails = lazy(() => import(/* webpackChunkName: "package-details" 
 
 // Enhanced loading fallback with progress
 const LoadingFallback = () => (
-  <div className="container mx-auto px-4 py-8">
+  <div className="container mx-auto">
     <Skeleton className="h-[200px] w-full mb-8" />
     <div className="space-y-4">
       <Skeleton className="h-8 w-3/4" />

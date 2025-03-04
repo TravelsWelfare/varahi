@@ -21,7 +21,7 @@ const SectionLoader = () => (
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full p-0 m-0">
       <Helmet>
         <title>Varahi journey - Your Trusted Char Dham Yatra Partner</title>
         <meta 

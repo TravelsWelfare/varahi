@@ -16,7 +16,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className="relative h-screen w-full overflow-hidden">
         <OptimizedImage
           src="https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
           alt="Char Dham Yatra"
@@ -29,11 +29,11 @@ const HeroSection = () => {
         />
         
         {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40 z-10" />
+      <div className="absolute inset-0 bg-black/40 z-10 backdrop-blur-sm" />
       
       {/* Hero Content */}
       <div className="container mx-auto px-4 h-full flex items-center relative z-20">
-        <div className="max-w-3xl animate-fade-in-up">
+        <div className="max-w-3xl animate-fade-in-up ">
           <div className="inline-block bg-primary/90 backdrop-blur-sm rounded-lg px-4 py-1 mb-6">
             <p className="text-primary-foreground font-medium">Char Dham Yatra Specialists</p>
           </div>
