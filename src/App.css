@@ -1,8 +1,76 @@
 #root {
-  max-width: 100%; /* Change from 1280px */
-  margin: 0;       /* Remove auto margin */
-  padding: 0;      /* Remove 2rem padding */
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
   text-align: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Add responsive container utilities */
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Add responsive font sizing */
+:root {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    font-size: 16px;
+  }
+}
+
+/* Ensure images are responsive by default */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Add touch-friendly tap targets for mobile */
+button, 
+a {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@media (max-width: 640px) {
+  .hide-on-mobile {
+    display: none;
+  }
 }
 
 .logo {

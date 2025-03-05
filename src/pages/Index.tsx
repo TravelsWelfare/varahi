@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { Skeleton } from "@/components/ui/skeleton";
-import { WorldMapDemo } from "@/components/WorldMapDemo";
+import { GridMotionDemo } from "@/components/GridMotionDemo";
 
 // Lazy load heavy components
 const HeroSection = lazy(() => import("@/components/HeroSection"));
@@ -79,7 +79,7 @@ const Index = () => {
         </Suspense>
 
         <Suspense fallback={<SectionLoader />}>
-          <WorldMapDemo />
+          <GridMotionDemo />
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>

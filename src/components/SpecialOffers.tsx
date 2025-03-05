@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ArrowRight, Tag, Percent, Calendar, Gift, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -80,7 +79,7 @@ const SpecialOffers = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {offers.map((offer, index) => (
             <div 
               key={offer.id}
@@ -90,23 +89,23 @@ const SpecialOffers = () => {
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <div className={`p-6 ${offer.color}`}>
-                <div className="flex justify-between items-start">
+              <div className={`p-4 md:p-6 ${offer.color}`}>
+                <div className="flex flex-row justify-between items-start gap-2">
                   <div>
                     <div className="flex items-center mb-3 gap-2">
                       <div className={`p-2 rounded-full bg-white/80 ${offer.iconColor}`}>
                         {offer.icon}
                       </div>
-                      <h3 className={`text-xl font-semibold ${offer.textColor}`}>{offer.title}</h3>
+                      <h3 className={`text-lg md:text-xl font-semibold ${offer.textColor}`}>{offer.title}</h3>
                     </div>
-                    <p className={`${offer.textColor} mb-4 opacity-80`}>{offer.description}</p>
+                    <p className={`${offer.textColor} text-base mb-4 opacity-80`}>{offer.description}</p>
                   </div>
-                  <Badge className="bg-white font-semibold text-primary border-primary">
+                  <Badge className="bg-white font-semibold text-primary border-primary whitespace-nowrap">
                     {offer.discount}
                   </Badge>
                 </div>
                 
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex flex-row items-center justify-between gap-2">
                   <span className={`text-sm ${offer.textColor} opacity-70`}>{offer.validUntil}</span>
                   <Button 
                     size="sm"
@@ -114,7 +113,7 @@ const SpecialOffers = () => {
                     className={`border-current ${offer.textColor} hover:bg-white/30`}
                     onClick={() => handleClaimOffer(offer.title)}
                   >
-                    Claim Offer <ArrowRight className="ml-2 h-4 w-4" />
+                    Claim <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               </div>

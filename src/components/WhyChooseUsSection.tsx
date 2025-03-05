@@ -81,19 +81,19 @@ const WhyChooseUsSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
         >
           {features.map((feature, index) => (
             <motion.div 
               key={index}
               variants={itemVariants}
-              className="p-6 rounded-xl bg-white border border-himalaya-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="p-4 md:p-6 rounded-xl bg-white border border-himalaya-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 transform transition-transform hover:scale-110 duration-300">
+              <div className="h-12 w-12 md:h-16 md:w-16 rounded-full bg-primary/10 flex items-center justify-center mb-3 md:mb-4 transform transition-transform hover:scale-110 duration-300">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold text-himalaya-800 mb-3">{feature.title}</h3>
-              <p className="text-himalaya-600">{feature.description}</p>
+              <h3 className="text-lg md:text-xl font-semibold text-himalaya-800 mb-2 md:mb-3">{feature.title}</h3>
+              <p className="text-base text-himalaya-600">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>

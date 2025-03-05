@@ -98,16 +98,16 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
               </Badge>
             </div>
 
-            <div className="p-6">
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <h3 className="text-xl font-bold text-himalaya-800">{pkg.title}</h3>
+            <div className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-4">
+                <h3 className="text-lg sm:text-xl font-bold text-himalaya-800">{pkg.title}</h3>
                 <div className="flex items-center text-himalaya-600 whitespace-nowrap">
                   <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
                   <span className="text-sm">{pkg.duration}</span>
                 </div>
               </div>
               
-              <p className="text-himalaya-600 mb-4 line-clamp-2">{pkg.description}</p>
+              <p className="text-sm sm:text-base text-himalaya-600 mb-4 line-clamp-2">{pkg.description}</p>
               
               <div className="flex items-center text-himalaya-600 mb-4">
                 <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
@@ -117,26 +117,26 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium text-himalaya-800 mb-2">Package Includes:</h4>
-                  <ul className="grid grid-cols-2 gap-2">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {pkg.features.map((feature, index) => (
-                      <li key={index} className="text-sm text-himalaya-600 flex items-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2" />
-                        {feature}
+                      <li key={index} className="text-xs sm:text-sm text-himalaya-600 flex items-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2 flex-shrink-0" />
+                        <span className="line-clamp-1">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 
                 <div className="pt-4 border-t">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                     <div>
-                      <span className="text-sm text-himalaya-600">Starting from</span>
-                      <div className="text-2xl font-bold text-primary">{pkg.price}</div>
+                      <span className="text-xs sm:text-sm text-himalaya-600">Starting from</span>
+                      <div className="text-xl sm:text-2xl font-bold text-primary">{pkg.price}</div>
                     </div>
                     <Button
                       variant="outline"
                       onClick={() => setIsItineraryOpen(!isItineraryOpen)}
-                      className="gap-2"
+                      className="w-full sm:w-auto gap-2 text-sm"
                     >
                       View Itinerary
                       <ChevronDown className={cn(
@@ -146,20 +146,20 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
                     </Button>
                   </div>
                   
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Link 
                       to={`/packages/${pkg.id}`}
-                      className="flex-1"
+                      className="w-full sm:flex-1"
                     >
                       <Button 
                         variant="outline"
-                        className="w-full"
+                        className="w-full text-sm"
                       >
                         Get Details
                       </Button>
                     </Link>
                     <Button 
-                      className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm"
                       onClick={onBook}
                     >
                       Book Now
@@ -172,10 +172,10 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
 
           {/* Itinerary Section */}
           {isItineraryOpen && itinerary && (
-            <div className="p-6 border-l">
+            <div className="p-4 sm:p-6 border-t sm:border-t-0 sm:border-l">
               <div className="mb-4">
-                <h3 className="text-xl font-bold text-himalaya-800 mb-2">Day-by-Day Itinerary</h3>
-                <p className="text-himalaya-600">Detailed breakdown of your spiritual journey</p>
+                <h3 className="text-lg sm:text-xl font-bold text-himalaya-800 mb-2">Day-by-Day Itinerary</h3>
+                <p className="text-sm sm:text-base text-himalaya-600">Detailed breakdown of your spiritual journey</p>
               </div>
               <PackageItinerary days={itinerary.days} />
             </div>
