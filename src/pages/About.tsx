@@ -96,18 +96,18 @@ const About = () => {
         {/* Enhanced Services Section */}
         <section className="py-20 bg-himalaya-50">
           <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="text-primary font-medium text-lg mb-4 block">Our Commitment to You</span>
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-himalaya-800 mb-6">
+            <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16 px-4">
+              <span className="text-primary font-medium text-base md:text-lg mb-3 md:mb-4 block">Our Commitment to You</span>
+              <h2 className="text-2xl md:text-3xl lg:text-5xl font-display font-bold text-himalaya-800 mb-4 md:mb-6">
                 Experience the Varahi journey Difference
               </h2>
-              <p className="text-xl text-himalaya-600">
+              <p className="text-lg md:text-xl text-himalaya-600">
                 We go beyond traditional travel services to ensure your spiritual journey is 
                 comfortable, safe, and deeply meaningful.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 px-4">
               {[
                 {
                   icon: <Users className="h-12 w-12 text-primary" />,
@@ -148,18 +148,18 @@ const About = () => {
               ].map((service, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white rounded-xl shadow-lg p-8 relative overflow-hidden group"
-                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="bg-white rounded-xl shadow-lg p-4 md:p-6 lg:p-8 relative overflow-hidden group"
+                  whileHover={{ y: -5, scale: 1.01 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <div className="absolute top-0 right-0 bg-primary/10 text-primary px-4 py-1 text-sm font-medium rounded-bl-xl">
+                  <div className="absolute top-0 right-0 bg-primary/10 text-primary px-3 py-1 text-xs md:text-sm font-medium rounded-bl-xl">
                     {service.highlight}
                   </div>
-                  <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                  <div className="bg-primary/10 rounded-full w-16 h-16 md:w-20 md:h-20 flex items-center justify-center mb-4 md:mb-6 group-hover:bg-primary/20 transition-colors">
                     {service.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-himalaya-800 mb-4">{service.title}</h3>
-                  <p className="text-himalaya-600">{service.description}</p>
+                  <h3 className="text-lg md:text-xl font-semibold text-himalaya-800 mb-2 md:mb-4">{service.title}</h3>
+                  <p className="text-sm md:text-base text-himalaya-600">{service.description}</p>
                 </motion.div>
               ))}
             </div>
