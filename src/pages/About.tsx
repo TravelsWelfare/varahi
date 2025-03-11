@@ -24,11 +24,11 @@ const About = () => {
           <div 
             className="absolute inset-0 bg-cover bg-center z-0"
             style={{
-              backgroundImage: "url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')",
+              backgroundImage: "url('/dariusz-sankowski-3OiYMgDKJ6k-unsplash.jpg')",
               transform: "scale(1.1)"
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70 backdrop-blur-sm"></div>
+            {/* <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70 backdrop-blur-sm"></div> */}
           </div>
           
           <div className="container mx-auto px-4 relative z-10 text-center">
@@ -285,7 +285,7 @@ const About = () => {
                   <Button 
                     size="lg"
                     variant="outline"
-                    className="border-2 border-white text-white hover:bg-white/10 text-lg px-10 py-6 rounded-full"
+                    className="border-2 border-white text-black hover:bg-white/10 text-lg px-10 py-6 rounded-full"
                   >
                     Download Brochure
                   </Button>

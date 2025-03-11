@@ -19,7 +19,7 @@ const HeroSection = () => {
   return (
     <div className="relative h-screen w-full overflow-hidden">
         <OptimizedImage
-          src="https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+          src="https://plus.unsplash.com/premium_photo-1677002240252-af3f88114efc?q=80&w=2925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Char Dham Yatra"
           priority
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out"

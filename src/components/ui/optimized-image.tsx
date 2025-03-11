@@ -1,67 +1,84 @@
-import React, { useState } from 'react';
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
+import React, { useState, useEffect, memo } from 'react';
+import { cn } from '@/lib/utils';
+import { getOptimizedImageUrl, generateSrcSet } from '@/lib/imageUtils';
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   alt: string;
+  width?: number;
+  height?: number;
   className?: string;
+  placeholderColor?: string;
+  sizes?: string;
   priority?: boolean;
-  quality?: number;
+  format?: 'webp' | 'jpeg' | 'png' | 'avif';
 }
 
-const generateWebPUrl = (url: string, quality: number = 75): string => {
-  // If it's already a WebP image, return as is
-  if (url.endsWith('.webp')) return url;
+export const OptimizedImage = memo(({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  placeholderColor = '#f3f4f6',
+  sizes = '100vw',
+  priority = false,
+  format = 'webp',
+  ...props
+}: OptimizedImageProps) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(false);
   
-  // For local images in public folder
-  if (url.startsWith('/')) {
-    return url.replace(/\.(jpg|jpeg|png)$/, '.webp');
-  }
-  
-  // For external images (like Unsplash), try to get WebP if available
-  if (url.includes('unsplash.com')) {
-    return `${url}&fm=webp&q=${quality}`;
-  }
-  
-  return url;
-};
+  // Handle image load error
+  const handleError = () => {
+    console.error(`Failed to load image: ${src}`);
+    setError(true);
+    setIsLoaded(true);
+  };
 
-export const OptimizedImage = React.forwardRef<HTMLImageElement, OptimizedImageProps>(
-  ({ src, alt, className, priority = false, quality = 75, ...props }, ref) => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(false);
-    
-    // Generate WebP version URL with quality parameter
-    const webpSrc = generateWebPUrl(src, quality);
+  // Preload image if priority is true
+  useEffect(() => {
+    if (priority && src) {
+      const img = new Image();
+      img.src = getOptimizedImageUrl(src, width, format);
+    }
+  }, [priority, src, width, format]);
 
-    return (
-      <div className={cn("relative overflow-hidden", className)}>
-        {isLoading && <Skeleton className="absolute inset-0" />}
-        <picture>
-          <source srcSet={webpSrc} type="image/webp" />
-          <source srcSet={src} type={`image/${src.split('.').pop()}`} />
-          <img
-            ref={ref}
-            src={error ? '/placeholder.svg' : src}
-            alt={alt}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            onLoad={() => setIsLoading(false)}
-            onError={() => {
-              setError(true);
-              setIsLoading(false);
-            }}
-            className={cn(
-              "transition-opacity duration-300",
-              isLoading ? "opacity-0" : "opacity-100"
-            )}
-            {...props}
-          />
-        </picture>
-      </div>
-    );
-  }
-);
+  return (
+    <div 
+      className={cn("relative overflow-hidden", className)}
+      style={{ 
+        backgroundColor: placeholderColor,
+        paddingBottom: height && width ? `${(height / width) * 100}%` : undefined,
+      }}
+    >
+      {!error && (
+        <img
+          src={getOptimizedImageUrl(src, width, format)}
+          alt={alt}
+          width={width}
+          height={height}
+          sizes={sizes}
+          srcSet={generateSrcSet(src, undefined, format)}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding={priority ? 'sync' : 'async'}
+          onLoad={() => setIsLoaded(true)}
+          onError={handleError}
+          className={cn(
+            "w-full h-full object-cover transition-opacity duration-500",
+            isLoaded ? "opacity-100" : "opacity-0",
+          )}
+          {...props}
+        />
+      )}
+      
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400">
+          <span className="text-sm">Image not available</span>
+        </div>
+      )}
+    </div>
+  );
+});
 
-OptimizedImage.displayName = "OptimizedImage";
+OptimizedImage.displayName = 'OptimizedImage';

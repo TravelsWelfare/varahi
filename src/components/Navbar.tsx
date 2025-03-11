@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Phone } from "lucide-react";
 import { PreloadLink } from "./PreloadLink";
+import { useNavigate } from "react-router-dom";
+import { useBooking } from "@/context/BookingContext";
 
 interface NavLinkProps {
   href: string;
@@ -23,6 +25,8 @@ const NavLink = ({ href, label, isScrolled }: NavLinkProps) => (
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { resetBookingDetails } = useBooking();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +36,12 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleBookNowClick = () => {
+    // Reset any previous booking details when starting a new booking from navbar
+    resetBookingDetails();
+    navigate('/contact');
+  };
 
   return (
     <header
@@ -70,7 +80,7 @@ const Navbar = () => {
             </Button>
             <Button
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              onClick={() => window.location.href = "/contact"}
+              onClick={handleBookNowClick}
             >
               Book Now
             </Button>

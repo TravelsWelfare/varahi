@@ -1,40 +1,102 @@
-import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { Button } from "@/components/ui/button";
-import { Image } from "@/components/ui/image";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import { PackageItinerary } from "@/components/PackageItinerary";
 import { packageItineraries } from "@/data/packageItineraries";
 import { packages } from "@/data/packages";
+import { useBooking } from "@/context/BookingContext";
+import { useToast } from "@/components/ui/use-toast";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import SEO from "@/components/SEO";
+import { useMemo } from "react";
 
 const PackageDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { selectPackage } = useBooking();
+  const { toast } = useToast();
   const pkg = packages.find(p => p.id === Number(id));
   const itinerary = packageItineraries.find(i => i.packageId === Number(id));
+
+  // Generate structured data for the package - moved before conditional return
+  const structuredData = useMemo(() => {
+    if (!pkg) return null;
+    
+    return {
+      "@context": "https://schema.org",
+      "@type": "TouristTrip", 
+      "name": pkg.title,
+      "description": pkg.description,
+      "touristType": ["Pilgrimage", "Religious tourism"],
+      "offers": {
+        "@type": "Offer",
+        "price": pkg.price.replace('₹', '').replace(',', ''),
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "validFrom": new Date().toISOString().split('T')[0]
+      },
+      "location": {
+        "@type": "Place",
+        "name": pkg.location,
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "IN"
+        }
+      },
+      "itinerary": {
+        "@type": "ItemList",
+        "itemListElement": pkg.features.map((feature, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "name": feature
+        }))
+      },
+      "image": pkg.image
+    };
+  }, [pkg]);
 
   if (!pkg) {
     return <div>Package not found</div>;
   }
 
+  const handleBookNow = () => {
+    selectPackage(pkg.id, pkg.title, pkg.price);
+    
+    toast({
+      title: "Package Selected",
+      description: `${pkg.title} has been selected. Please complete your booking details.`,
+      duration: 3000,
+    });
+    
+    navigate('/contact');
+  };
+
   return (
     <div className="min-h-screen">
-      <Helmet>
-        <title>{pkg.title} | Varahi journey</title>
-        <meta name="description" content={pkg.description} />
-      </Helmet>
+      <SEO 
+        title={`${pkg.title} | Varahi Journey`}
+        description={pkg.description}
+        canonicalUrl={`/packages/${pkg.id}`}
+        ogImage={pkg.image}
+        ogType="website"
+        keywords={[pkg.title, "Char Dham", "Pilgrimage", "Travel Package", pkg.location]}
+        structuredData={structuredData}
+      />
       
       <Navbar />
       
       <main className="pt-20">
         {/* Hero Section */}
         <div className="relative h-[60vh] min-h-[400px]">
-          <Image
+          <OptimizedImage
             src={pkg.image}
             alt={pkg.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full"
+            priority={true}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-black/50 flex items-center">
             <div className="container mx-auto px-4">
@@ -53,38 +115,35 @@ const PackageDetails = () => {
             </div>
           </div>
         </div>
-
+        
         <div className="container mx-auto px-4 py-12">
           <div className="grid md:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="md:col-span-2 space-y-8">
-              {/* Features */}
+              <section>
+                <h2 className="text-2xl font-bold text-himalaya-800 mb-4">Package Highlights</h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {pkg.highlights.map((highlight, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-2 flex-shrink-0" />
+                      <span className="text-himalaya-600">{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+              
               <section>
                 <h2 className="text-2xl font-bold text-himalaya-800 mb-4">Package Includes</h2>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {pkg.features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3 p-4 rounded-lg border bg-white">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2" />
-                      <span className="text-himalaya-700">{feature}</span>
-                    </div>
+                    <li key={index} className="flex items-start">
+                      <span className="w-2 h-2 rounded-full bg-primary mt-2 mr-2 flex-shrink-0" />
+                      <span className="text-himalaya-600">{feature}</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </section>
-
-              {/* Highlights */}
-              <section>
-                <h2 className="text-2xl font-bold text-himalaya-800 mb-4">Highlights</h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {pkg.highlights.map((highlight, index) => (
-                    <div key={index} className="flex items-start gap-3 p-4 rounded-lg border bg-white">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2" />
-                      <span className="text-himalaya-700">{highlight}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* Itinerary */}
+              
               {itinerary && (
                 <section>
                   <h2 className="text-2xl font-bold text-himalaya-800 mb-4">Detailed Itinerary</h2>
@@ -104,6 +163,7 @@ const PackageDetails = () => {
                 <Button 
                   size="lg"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  onClick={handleBookNow}
                 >
                   Book Now <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>

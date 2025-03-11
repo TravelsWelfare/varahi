@@ -23,7 +23,7 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
             alt={alt}
             loading={loading}
             decoding="async"
-            fetchPriority={loading === "eager" ? "high" : "auto"}
+            fetchpriority={loading === "eager" ? "high" : "auto"}
             sizes={sizes}
             onLoad={() => setIsLoading(false)}
             onError={() => {
@@ -41,3 +41,5 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
     );
   }
 );
+
+Image.displayName = "Image";

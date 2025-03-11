@@ -2,54 +2,49 @@ import { Helmet } from "react-helmet";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, CheckCircle, Calendar, Shield, Star, Users, ArrowRight } from "lucide-react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { motion } from "framer-motion";
+import { useBookingForm } from "@/hooks/useBookingForm";
+import { useBooking } from "@/context/BookingContext";
+import { useLocation } from "react-router-dom";
+import { packages } from "@/data/packages";
+import BookingHistory from "@/components/BookingHistory";
 
 const Contact = () => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-    tourDate: "",
-    packageType: "standard",
+  const location = useLocation();
+  const { selectPackage, state } = useBooking();
+  const { 
+    bookingDetails, 
+    selectedPackage, 
+    isLoading, 
+    formErrors, 
+    handleInputChange, 
+    handleSubmit 
+  } = useBookingForm({
+    onSuccess: () => {
+      // Scroll to top after successful submission
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In a real app, you would send this data to a server
-    console.log("Form submitted:", formData);
+  // Check for package ID in URL query params
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const packageId = params.get('package');
     
-    toast({
-      title: "Booking Request Received!",
-      description: "Our team will contact you within 2 hours to confirm your booking.",
-      variant: "default",
-    });
-    
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-      tourDate: "",
-      packageType: "standard",
-    });
-  };
+    if (packageId && !state.selectedPackage.id) {
+      const pkg = packages.find(p => p.id === Number(packageId));
+      if (pkg) {
+        selectPackage(pkg.id, pkg.title, pkg.price);
+      }
+    }
+  }, [location, selectPackage, state.selectedPackage.id]);
 
   // Testimonials data
   const testimonials = [
@@ -161,9 +156,11 @@ const Contact = () => {
                 id="booking-form"
                 className="bg-white p-8 rounded-xl shadow-xl border border-primary/20 relative overflow-hidden"
               >
-                <div className="absolute top-0 right-0 bg-primary text-white px-4 py-2 rounded-bl-xl font-medium">
-                  Fast-Track Booking
-                </div>
+                {selectedPackage.id && (
+                  <div className="absolute top-0 right-0 bg-primary text-white px-4 py-2 rounded-bl-xl font-medium">
+                    Selected: {selectedPackage.title}
+                  </div>
+                )}
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-himalaya-800 mb-2">Book Your Journey Now</h2>
                 <p className="text-himalaya-600 mb-6">Fill this form to secure your spot. We'll contact you within 2 hours.</p>
                 
@@ -177,12 +174,15 @@ const Contact = () => {
                         id="name"
                         name="name"
                         type="text"
-                        value={formData.name}
+                        value={bookingDetails.name}
                         onChange={handleInputChange}
                         required
                         placeholder="Enter your full name"
-                        className="border-gray-300 focus:border-primary focus:ring-primary"
+                        className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.name ? 'border-red-500' : ''}`}
                       />
+                      {formErrors.name && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
+                      )}
                     </div>
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
@@ -192,12 +192,15 @@ const Contact = () => {
                         id="phone"
                         name="phone"
                         type="tel"
-                        value={formData.phone}
+                        value={bookingDetails.phone}
                         onChange={handleInputChange}
                         required
                         placeholder="Your contact number"
-                        className="border-gray-300 focus:border-primary focus:ring-primary"
+                        className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.phone ? 'border-red-500' : ''}`}
                       />
+                      {formErrors.phone && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
+                      )}
                     </div>
                   </div>
                   
@@ -209,12 +212,15 @@ const Contact = () => {
                       id="email"
                       name="email"
                       type="email"
-                      value={formData.email}
+                      value={bookingDetails.email}
                       onChange={handleInputChange}
                       required
                       placeholder="your.email@example.com"
-                      className="border-gray-300 focus:border-primary focus:ring-primary"
+                      className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.email ? 'border-red-500' : ''}`}
                     />
+                    {formErrors.email && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                    )}
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -226,11 +232,14 @@ const Contact = () => {
                         id="tourDate"
                         name="tourDate"
                         type="date"
-                        value={formData.tourDate}
+                        value={bookingDetails.tourDate}
                         onChange={handleInputChange}
                         required
-                        className="border-gray-300 focus:border-primary focus:ring-primary"
+                        className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.tourDate ? 'border-red-500' : ''}`}
                       />
+                      {formErrors.tourDate && (
+                        <p className="mt-1 text-sm text-red-500">{formErrors.tourDate}</p>
+                      )}
                     </div>
                     <div>
                       <label htmlFor="packageType" className="block text-sm font-medium text-gray-700 mb-1">
@@ -239,7 +248,7 @@ const Contact = () => {
                       <select
                         id="packageType"
                         name="packageType"
-                        value={formData.packageType}
+                        value={bookingDetails.packageType}
                         onChange={handleInputChange}
                         required
                         className="w-full rounded-md border-gray-300 focus:border-primary focus:ring-primary py-2 px-3"
@@ -254,47 +263,35 @@ const Contact = () => {
                   
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Special Requirements (Optional)
+                      Special Requests or Questions
                     </label>
                     <Textarea
                       id="message"
                       name="message"
-                      value={formData.message}
+                      value={bookingDetails.message}
                       onChange={handleInputChange}
-                      placeholder="Any specific requirements or questions?"
-                      rows={3}
-                      className="border-gray-300 focus:border-primary focus:ring-primary"
+                      placeholder="Tell us about any special requirements or questions you have..."
+                      className="border-gray-300 focus:border-primary focus:ring-primary min-h-[100px]"
                     />
                   </div>
                   
-                  <div className="bg-primary/10 p-4 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1">
-                        <CheckCircle className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-himalaya-800">Early Bird Discount</h4>
-                        <p className="text-sm text-himalaya-600">Book now and get 15% off on all packages for the upcoming season!</p>
-                      </div>
-                    </div>
+                  <div className="flex items-center space-x-2 text-sm text-himalaya-600">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span>Your information is secure and will not be shared</span>
                   </div>
                   
                   <Button 
-                    type="submit" 
-                    className="w-full bg-primary hover:bg-primary/90 text-lg py-6 rounded-lg"
+                    type="submit"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg"
+                    disabled={isLoading}
                   >
-                    Secure Your Booking Now
+                    {isLoading ? 'Processing...' : 'Book Now & Secure Your Spot'}
                   </Button>
-                  
-                  <p className="text-xs text-center text-gray-500">
-                    By submitting this form, you agree to our Terms & Conditions and Privacy Policy.
-                    No payment required at this stage.
-                  </p>
                 </form>
               </motion.div>
 
-              {/* Contact Information and Testimonials */}
-              <div className="space-y-10">
+              {/* Contact Information and Booking History */}
+              <div className="space-y-12">
                 {/* Direct Contact Options */}
                 <motion.div
                   initial={{ opacity: 0, x: 30 }}
@@ -391,6 +388,11 @@ const Contact = () => {
                     </Button>
                   </div>
                 </motion.div>
+
+                {/* Booking History */}
+                <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                  <BookingHistory />
+                </div>
               </div>
             </div>
           </div>
