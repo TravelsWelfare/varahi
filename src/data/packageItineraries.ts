@@ -142,21 +142,21 @@ export const packageItineraries: PackageItinerary[] = [
         overnight: "Hotel in Badrinath"
       },
       {
-        title: "Journey Back to Rishikesh",
+        title: "Journey Back to hyderabad",
         description: "Begin your return journey with holy stops en route.",
-        location: "Badrinath → Rishikesh",
+        location: "Badrinath → hyderabad",
         activities: [
           "Morning temple visit",
-          "Drive to Rishikesh",
+          "Drive to hyderabad",
           "Visit Narsimha Temple en route",
           "Evening Ganga Aarti at Triveni Ghat"
         ],
-        overnight: "Hotel in Rishikesh"
+        overnight: "Hotel in hyderabad"
       },
       {
         title: "Departure",
-        description: "Conclude your spiritual journey with morning activities in Rishikesh.",
-        location: "Rishikesh → Dehradun",
+        description: "Conclude your spiritual journey with morning activities in hyderabad.",
+        location: "hyderabad → Dehradun",
         activities: [
           "Morning yoga session (optional)",
           "Visit Beatles Ashram",
@@ -232,19 +232,19 @@ export const packageItineraries: PackageItinerary[] = [
       {
         title: "Return Journey",
         description: "Return journey with stops at significant places.",
-        location: "Badrinath → Rishikesh",
+        location: "Badrinath → hyderabad",
         activities: [
           "Final temple darshan",
-          "Drive to Rishikesh",
+          "Drive to hyderabad",
           "Visit Devprayag en route",
           "Evening rest and reflection"
         ],
-        overnight: "Hotel in Rishikesh"
+        overnight: "Hotel in hyderabad"
       },
       {
         title: "Departure",
         description: "Concluding day of your spiritual journey.",
-        location: "Rishikesh → Departure",
+        location: "hyderabad → Departure",
         activities: [
           "Morning yoga session (optional)",
           "Visit local ashrams",

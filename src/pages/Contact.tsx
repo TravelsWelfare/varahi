@@ -304,7 +304,7 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="font-medium text-gray-900">Call Us Directly</h3>
-                        <p className="text-primary font-bold text-lg">+91 98765XXXXX</p>
+                        <p className="text-primary font-bold text-lg">+91 9346736285</p>
                         <p className="text-gray-600 text-sm">Available 9:00 AM - 8:00 PM</p>
                       </div>
                     </div>
@@ -328,7 +328,7 @@ const Contact = () => {
                       </div>
                       <div>
                         <h3 className="font-medium text-gray-900">WhatsApp Us</h3>
-                        <p className="text-green-600 font-bold">+91 98765XXXXX</p>
+                        <p className="text-green-600 font-bold">+91 9346736285</p>
                         <p className="text-gray-600 text-sm">Instant responses</p>
                       </div>
                     </div>

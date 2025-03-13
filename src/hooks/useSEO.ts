@@ -165,7 +165,7 @@ export const useSEO = ({
     logo = `${baseUrl}/logo.png`,
     url = baseUrl,
     contactPoint = {
-      telephone: "+91-1234567890",
+      telephone: "+91-9346736285",
       contactType: "customer service"
     }
   ) => {

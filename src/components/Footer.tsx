@@ -64,7 +64,7 @@ const Footer = () => {
               <FooterLink href="/destinations/badrinath" label="Badrinath" />
               <FooterLink href="/destinations/gangotri" label="Gangotri" />
               <FooterLink href="/destinations/yamunotri" label="Yamunotri" />
-              <FooterLink href="/destinations/rishikesh" label="Rishikesh" />
+              <FooterLink href="/destinations/hyderabad" label="hyderabad" />
             </ul>
           </div>
 
@@ -76,16 +76,16 @@ const Footer = () => {
                 <MapPin size={18} className="text-primary mt-1 mr-2" />
                 <p className="text-himalaya-700">
                   123 Seva Marg, <br />
-                  Rishikesh, Uttarakhand 249201
+                  hyderabad, Telangana 500032
                 </p>
               </div>
               <div className="flex items-center">
                 <Phone size={18} className="text-primary mr-2" />
-                <p className="text-himalaya-700">+91 98765XXXXX</p>
+                <p className="text-himalaya-700">+91 9346736285</p>
               </div>
               <div className="flex items-center">
                 <Mail size={18} className="text-primary mr-2" />
-                <p className="text-himalaya-700">info@Varahijourney.com</p>
+                <p className="text-himalaya-700">varahijourney@gmail.com</p>
               </div>
               <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
                 WhatsApp Us

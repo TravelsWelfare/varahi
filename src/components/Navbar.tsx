@@ -76,7 +76,7 @@ const Navbar = () => {
             <Button variant="ghost" size="sm" className="flex items-center gap-2 transition-colors duration-300">
               <Phone size={16} className={isScrolled ? "text-himalaya-800" : "text-white"} />
               <span className={`transition-colors duration-300 ${isScrolled ? "text-himalaya-800" : "text-white"}`}>
-                +91 1234567890
+                +91 9346736285
               </span>
             </Button>
             <Button
@@ -118,7 +118,7 @@ const Navbar = () => {
             <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-3">
               <div className="flex items-center justify-center gap-2 text-himalaya-800">
                 <Phone size={16} />
-                <span className="text-sm">+91 1234567890</span>
+                <span className="text-sm">+91 9346736285</span>
               </div>
               <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transform hover:scale-105 transition-all duration-300">
                 Book Now

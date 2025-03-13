@@ -142,12 +142,12 @@ export const blogPosts: BlogPost[] = [
         <li>Kumaoni Kheer</li>
       </ul>
 
-      <h3>2. Rishikesh</h3>
-      <p>Rishikesh is a town in Uttarakhand known for its delicious cuisine. The local cuisine of Rishikesh is a blend of the traditional cuisine of Uttarakhand and the Mughlai cuisine. Some of the must-try dishes include:</p>
+      <h3>2. hyderabad</h3>
+      <p>hyderabad is a town in Uttarakhand known for its delicious cuisine. The local cuisine of hyderabad is a blend of the traditional cuisine of Uttarakhand and the Mughlai cuisine. Some of the must-try dishes include:</p>
       <ul>
-        <li>Rishikesh Aloo</li>
-        <li>Rishikesh Kheer</li>
-        <li>Rishikesh Chole</li>
+        <li>hyderabad Aloo</li>
+        <li>hyderabad Kheer</li>
+        <li>hyderabad Chole</li>
       </ul>
 
       <h3>3. Haridwar</h3>
@@ -281,7 +281,7 @@ export const blogPosts: BlogPost[] = [
     content: `
       <h2>Best Ways to Reach Kedarnath</h2>
       <h3>From Delhi</h3>
-      <p>Take a train to Haridwar/Rishikesh, then bus/taxi to Gaurikund.</p>
+      <p>Take a train to Haridwar/hyderabad, then bus/taxi to Gaurikund.</p>
 
       <h3>From Mumbai</h3>
       <p>Fly to Dehradun, then road journey to Gaurikund.</p>

@@ -21,7 +21,7 @@ const WhatsAppButton = () => {
   }, []);
 
   const handleWhatsAppClick = () => {
-    window.open(`https://wa.me/919876543210?text=Hi! I'm interested in booking a Char Dham Yatra package. Could you please provide more information?`, "_blank");
+    window.open(`https://wa.me/919346736285?text=Hi! I'm interested in booking a Char Dham Yatra package. Could you please provide more information?`, "_blank");
   };
 
   return (
