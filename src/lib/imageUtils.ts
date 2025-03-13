@@ -27,17 +27,39 @@ export const getOptimizedImageUrl = (
   width?: number,
   format: 'webp' | 'jpeg' | 'png' | 'avif' = 'webp'
 ): string => {
-  // If it's an external URL or already processed, return as is
-  if (src.startsWith('http') || src.includes('?')) {
+  try {
+    // Handle unsplash images
+    if (src.includes('images.unsplash.com')) {
+      const url = new URL(src);
+      url.searchParams.set('w', width?.toString() || '1080');
+      url.searchParams.set('fm', format);
+      url.searchParams.set('q', '80');
+      url.searchParams.set('auto', 'format,compress');
+      return url.toString();
+    }
+
+    // Handle cloudinary images
+    if (src.includes('res.cloudinary.com')) {
+      const parts = src.split('/upload/');
+      if (parts.length === 2) {
+        const transformations = `w_${width || 1080},f_${format},q_auto:good`;
+        return `${parts[0]}/upload/${transformations}/${parts[1]}`;
+      }
+    }
+
+    // For local images or other sources
+    if (!src.startsWith('http')) {
+      const widthParam = width ? `?width=${width}` : '';
+      const formatParam = widthParam ? `&format=${format}` : `?format=${format}`;
+      return `${src}${widthParam}${formatParam}`;
+    }
+
+    // Return original URL if no optimization possible
+    return src;
+  } catch (error) {
+    console.error('Error optimizing image URL:', error);
     return src;
   }
-
-  // For local images, add width and format parameters
-  // This assumes you have a server-side image processing setup
-  const widthParam = width ? `?width=${width}` : '';
-  const formatParam = widthParam ? `&format=${format}` : `?format=${format}`;
-  
-  return `${src}${widthParam}${formatParam}`;
 };
 
 /**
@@ -52,11 +74,14 @@ export const generateSrcSet = (
   widths: number[] = [640, 750, 828, 1080, 1280, 1920],
   format: 'webp' | 'jpeg' | 'png' | 'avif' = 'webp'
 ): string => {
-  if (src.startsWith('http')) return '';
-  
-  return widths
-    .map(w => `${getOptimizedImageUrl(src, w, format)} ${w}w`)
-    .join(', ');
+  try {
+    return widths
+      .map(w => `${getOptimizedImageUrl(src, w, format)} ${w}w`)
+      .join(', ');
+  } catch (error) {
+    console.error('Error generating srcSet:', error);
+    return '';
+  }
 };
 
 /**
@@ -95,4 +120,4 @@ export const isInViewport = (element: HTMLElement, threshold = 0.1): boolean => 
     rect.top <= (window.innerHeight || document.documentElement.clientHeight) * (1 + threshold) &&
     rect.bottom >= 0 - (window.innerHeight || document.documentElement.clientHeight) * threshold
   );
-}; 
+};

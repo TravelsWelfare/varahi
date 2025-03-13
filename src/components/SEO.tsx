@@ -13,6 +13,7 @@ interface SEOProps {
   author?: string;
   publishedTime?: string;
   modifiedTime?: string;
+  prefetchResources?: string[];
 }
 
 const SEO = memo(({
@@ -27,6 +28,7 @@ const SEO = memo(({
   author = 'Varahi Journey',
   publishedTime,
   modifiedTime,
+  prefetchResources = [],
 }: SEOProps) => {
   // Base URL for absolute URLs
   const baseUrl = 'https://varahijourney.com';
@@ -77,10 +79,28 @@ const SEO = memo(({
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="theme-color" content="#4f46e5" />
       
-      {/* Preconnect to important domains */}
+      {/* Resource Hints - Preconnect to critical domains */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://images.unsplash.com" />
+      <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+      <link rel="preconnect" href="https://unpkg.com" />
+      <link rel="preconnect" href="https://res.cloudinary.com" />
+      
+      {/* DNS Prefetching for faster subsequent page loads */}
+      <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+      <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+      <link rel="dns-prefetch" href="https://images.unsplash.com" />
+      <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+      
+      {/* Prefetch resources for likely navigation */}
+      {prefetchResources.map((resource, index) => (
+        <link key={`prefetch-${index}`} rel="prefetch" href={resource} />
+      ))}
+      
+      {/* Preload critical assets */}
+      <link rel="preload" href="/earth-blue-marble.jpg" as="image" />
+      <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
     </Helmet>
   );
 });

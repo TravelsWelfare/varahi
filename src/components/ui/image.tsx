@@ -5,12 +5,36 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
   webpSrc?: string;
+  priority?: boolean;
 }
 
 export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
-  ({ className, src, webpSrc, alt, fallback = "/placeholder.svg", loading = "lazy", sizes = "100vw", ...props }, ref) => {
+  ({ 
+    className, 
+    src, 
+    webpSrc, 
+    alt, 
+    fallback = "/placeholder.svg", 
+    loading = "lazy", 
+    sizes = "100vw",
+    priority = false,
+    onLoad,
+    onError,
+    ...props 
+  }, ref) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(false);
+
+    const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+      setIsLoading(false);
+      onLoad?.(e);
+    };
+
+    const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+      setError(true);
+      setIsLoading(false);
+      onError?.(e);
+    };
 
     return (
       <div className={cn("relative overflow-hidden", className)}>
@@ -21,15 +45,12 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
             ref={ref}
             src={error ? fallback : src}
             alt={alt}
-            loading={loading}
-            decoding="async"
-            fetchpriority={loading === "eager" ? "high" : "auto"}
+            loading={priority ? "eager" : loading}
+            decoding={priority ? "sync" : "async"}
+            fetchpriority={priority ? "high" : "auto"}
             sizes={sizes}
-            onLoad={() => setIsLoading(false)}
-            onError={() => {
-              setError(true);
-              setIsLoading(false);
-            }}
+            onLoad={handleLoad}
+            onError={handleError}
             className={cn(
               "transition-opacity duration-300",
               isLoading ? "opacity-0" : "opacity-100"

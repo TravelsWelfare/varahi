@@ -24,6 +24,11 @@
     <link rel="preload" href="/src/App.css" as="style">
     <link rel="modulepreload" href="/src/main.tsx" />
     
+    <!-- Critical assets preload -->
+    <link rel="preload" href="/earth-blue-marble.jpg" as="image" fetchpriority="high">
+    <link rel="preload" href="/images/hero-bg.jpg" as="image" fetchpriority="high">
+    <link rel="preload" href="/images/logo.png" as="image" fetchpriority="high">
+    
     <!-- Font optimization -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +41,22 @@
     <!-- Resource hints -->
     <link rel="dns-prefetch" href="https://images.unsplash.com">
     <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    
+    <!-- Prefetch likely navigation paths -->
+    <link rel="prefetch" href="/packages">
+    <link rel="prefetch" href="/about">
+    <link rel="prefetch" href="/contact">
+    
+    <!-- Preload critical JavaScript chunks -->
+    <link rel="modulepreload" href="/src/components/Navbar.tsx">
+    <link rel="modulepreload" href="/src/components/Footer.tsx">
+    <link rel="modulepreload" href="/src/components/HeroSection.tsx">
     
     <!-- Cache control -->
     <meta http-equiv="Cache-Control" content="max-age=31536000">
@@ -64,6 +85,25 @@
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
+      });
+      
+      // Prefetch resources after initial load
+      window.addEventListener('load', () => {
+        // Delay prefetching to prioritize initial page load
+        setTimeout(() => {
+          const prefetchLinks = [
+            '/assets/packages.js',
+            '/assets/about.js',
+            '/assets/contact.js'
+          ];
+          
+          prefetchLinks.forEach(link => {
+            const prefetchLink = document.createElement('link');
+            prefetchLink.rel = 'prefetch';
+            prefetchLink.href = link;
+            document.head.appendChild(prefetchLink);
+          });
+        }, 2000);
       });
     </script>
     <script type="module" src="/src/main.tsx"></script>

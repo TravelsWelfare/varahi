@@ -4,9 +4,8 @@ import Footer from "@/components/Footer";
 import { useToast } from "@/components/ui/use-toast";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MapPin, Phone, Mail, Clock, CheckCircle, Calendar, Shield, Star, Users, ArrowRight } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, CheckCircle, Calendar, Shield, Star, Users, ArrowRight, Loader2 } from "lucide-react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { motion } from "framer-motion";
 import { useBookingForm } from "@/hooks/useBookingForm";
@@ -14,6 +13,8 @@ import { useBooking } from "@/context/BookingContext";
 import { useLocation } from "react-router-dom";
 import { packages } from "@/data/packages";
 import BookingHistory from "@/components/BookingHistory";
+import { FloatingLabelInput } from "@/components/ui/floating-label-input";
+import { cn } from "@/lib/utils";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -21,14 +22,15 @@ const Contact = () => {
   const { selectPackage, state } = useBooking();
   const { 
     bookingDetails, 
-    selectedPackage, 
-    isLoading, 
-    formErrors, 
-    handleInputChange, 
-    handleSubmit 
+    selectedPackage,
+    isSubmitting,
+    formErrors,
+    touchedFields,
+    handleInputChange,
+    handleSubmit,
+    getFieldState
   } = useBookingForm({
     onSuccess: () => {
-      // Scroll to top after successful submission
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
@@ -161,105 +163,85 @@ const Contact = () => {
                     Selected: {selectedPackage.title}
                   </div>
                 )}
+
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-himalaya-800 mb-2">Book Your Journey Now</h2>
                 <p className="text-himalaya-600 mb-6">Fill this form to secure your spot. We'll contact you within 2 hours.</p>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Your Name*
-                      </label>
-                      <Input
-                        id="name"
-                        name="name"
-                        type="text"
-                        value={bookingDetails.name}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="Enter your full name"
-                        className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.name ? 'border-red-500' : ''}`}
-                      />
-                      {formErrors.name && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone Number*
-                      </label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={bookingDetails.phone}
-                        onChange={handleInputChange}
-                        required
-                        placeholder="Your contact number"
-                        className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.phone ? 'border-red-500' : ''}`}
-                      />
-                      {formErrors.phone && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.phone}</p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address*
-                    </label>
-                    <Input
-                      id="email"
+                    <FloatingLabelInput
+                      label="Your Name*"
+                      name="name"
+                      type="text"
+                      value={bookingDetails.name}
+                      onChange={handleInputChange}
+                      error={formErrors.name}
+                      touched={touchedFields.has('name')}
+                      required
+                      disabled={isSubmitting}
+                    />
+                    <FloatingLabelInput
+                      label="Email Address*"
                       name="email"
                       type="email"
                       value={bookingDetails.email}
                       onChange={handleInputChange}
+                      error={formErrors.email}
+                      touched={touchedFields.has('email')}
                       required
-                      placeholder="your.email@example.com"
-                      className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.email ? 'border-red-500' : ''}`}
+                      disabled={isSubmitting}
                     />
-                    {formErrors.email && (
-                      <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
-                    )}
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="tourDate" className="block text-sm font-medium text-gray-700 mb-1">
-                        Preferred Travel Date*
-                      </label>
-                      <Input
-                        id="tourDate"
-                        name="tourDate"
-                        type="date"
-                        value={bookingDetails.tourDate}
-                        onChange={handleInputChange}
-                        required
-                        className={`border-gray-300 focus:border-primary focus:ring-primary ${formErrors.tourDate ? 'border-red-500' : ''}`}
-                      />
-                      {formErrors.tourDate && (
-                        <p className="mt-1 text-sm text-red-500">{formErrors.tourDate}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label htmlFor="packageType" className="block text-sm font-medium text-gray-700 mb-1">
-                        Package Type*
-                      </label>
+                    <FloatingLabelInput
+                      label="Preferred Travel Date*"
+                      name="tourDate"
+                      type="date"
+                      value={bookingDetails.tourDate}
+                      onChange={handleInputChange}
+                      error={formErrors.tourDate}
+                      touched={touchedFields.has('tourDate')}
+                      required
+                      disabled={isSubmitting}
+                    />
+                    <div className="relative">
                       <select
                         id="packageType"
                         name="packageType"
                         value={bookingDetails.packageType}
                         onChange={handleInputChange}
-                        required
-                        className="w-full rounded-md border-gray-300 focus:border-primary focus:ring-primary py-2 px-3"
+                        disabled={isSubmitting}
+                        className={cn(
+                          "w-full rounded-md border bg-background px-3 py-3 text-sm shadow-sm transition-all appearance-none",
+                          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+                          formErrors.packageType && touchedFields.has('packageType') ? "border-red-500" : "border-input",
+                          isSubmitting && "opacity-50 cursor-not-allowed"
+                        )}
                       >
+                        <option value="">Select Package Type*</option>
                         <option value="standard">Standard Package</option>
                         <option value="premium">Premium Package</option>
                         <option value="deluxe">Deluxe Package</option>
                         <option value="custom">Custom Package</option>
                       </select>
+                      {touchedFields.has('packageType') && formErrors.packageType && (
+                        <p className="mt-1 text-xs text-red-500 animate-in fade-in-50">{formErrors.packageType}</p>
+                      )}
                     </div>
                   </div>
+                  
+                  <FloatingLabelInput
+                    label="Phone Number*"
+                    name="phone"
+                    type="tel"
+                    value={bookingDetails.phone}
+                    onChange={handleInputChange}
+                    error={formErrors.phone}
+                    touched={touchedFields.has('phone')}
+                    required
+                    disabled={isSubmitting}
+                  />
                   
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
@@ -270,22 +252,33 @@ const Contact = () => {
                       name="message"
                       value={bookingDetails.message}
                       onChange={handleInputChange}
+                      disabled={isSubmitting}
                       placeholder="Tell us about any special requirements or questions you have..."
                       className="border-gray-300 focus:border-primary focus:ring-primary min-h-[100px]"
                     />
                   </div>
                   
                   <div className="flex items-center space-x-2 text-sm text-himalaya-600">
-                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <Shield className="h-4 w-4 text-primary" />
                     <span>Your information is secure and will not be shared</span>
                   </div>
                   
                   <Button 
                     type="submit"
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg"
-                    disabled={isLoading}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg relative"
+                    disabled={isSubmitting}
                   >
-                    {isLoading ? 'Processing...' : 'Book Now & Secure Your Spot'}
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Book Now & Secure Your Spot
+                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
                   </Button>
                 </form>
               </motion.div>
@@ -495,7 +488,7 @@ const Contact = () => {
                 <Button 
                   size="lg"
                   variant="outline"
-                  className="border-white text-white hover:bg-white/10"
+                  className="border-white text-black hover:bg-white/10"
                 >
                   Call Us
                 </Button>

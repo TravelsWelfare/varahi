@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { PackageItinerary } from "./PackageItinerary";
 import { packageItineraries } from "@/data/packageItineraries";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PackageCardProps {
   package: {
@@ -31,7 +32,20 @@ interface PackageCardProps {
 
 const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }: PackageCardProps) => {
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const itinerary = packageItineraries.find(i => i.packageId === pkg.id);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(true);
+    console.error(`Failed to load image for package: ${pkg.title}`);
+  };
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -69,30 +83,50 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
           {JSON.stringify(jsonLd)}
         </script>
       </Helmet>
-      <div 
+      <motion.div 
         className={cn(
-          "rounded-xl bg-white border border-himalaya-100 shadow-sm overflow-hidden card-hover transition-all duration-300",
+          "rounded-xl bg-white border border-himalaya-100 shadow-sm overflow-hidden transition-all duration-500",
+          isHovered && "shadow-xl scale-[1.02]",
           isItineraryOpen && "lg:col-span-2"
         )}
         onMouseEnter={onHover}
         onMouseLeave={onLeave}
+        layout
       >
         <div className={cn(
           "grid gap-4",
           isItineraryOpen && "lg:grid-cols-2"
         )}>
           <div>
-            <div className="aspect-[16/9] relative">
-              <Image
-                src={pkg.image}
-                alt={pkg.title}
-                className="object-cover w-full h-full transition-transform duration-300"
-                style={{
-                  transform: isHovered ? 'scale(1.05)' : 'scale(1)'
-                }}
-              />
+            <div className="aspect-[16/9] relative overflow-hidden group">
+              <div className={cn(
+                "absolute inset-0 bg-himalaya-100 animate-pulse",
+                (imageLoaded && !imageError) && "hidden"
+              )} />
+              {!imageError ? (
+                <Image
+                  src={pkg.image}
+                  alt={pkg.title}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                  className={cn(
+                    "object-cover w-full h-full transition-all duration-700",
+                    "group-hover:scale-110",
+                    !imageLoaded && "opacity-0"
+                  )}
+                  fallback="/placeholder.svg"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-himalaya-50 text-himalaya-500">
+                  <div className="text-center p-4">
+                    <MapPin className="w-8 h-8 mx-auto mb-2" />
+                    <p className="text-sm">{pkg.location}</p>
+                  </div>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <Badge 
-                className="absolute top-4 left-4 bg-primary text-primary-foreground"
+                className="absolute top-4 left-4 bg-primary text-primary-foreground shadow-lg"
               >
                 {pkg.badgeText}
               </Badge>
@@ -100,17 +134,17 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
 
             <div className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-4">
-                <h3 className="text-lg sm:text-xl font-bold text-himalaya-800">{pkg.title}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-himalaya-800 group-hover:text-primary transition-colors duration-300">{pkg.title}</h3>
                 <div className="flex items-center text-himalaya-600 whitespace-nowrap">
-                  <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
+                  <Calendar className="h-4 w-4 mr-1 flex-shrink-0 text-primary" />
                   <span className="text-sm">{pkg.duration}</span>
                 </div>
               </div>
               
-              <p className="text-sm sm:text-base text-himalaya-600 mb-4 line-clamp-2">{pkg.description}</p>
+              <p className="text-sm sm:text-base text-himalaya-600 mb-4 line-clamp-2 group-hover:line-clamp-none transition-all duration-300">{pkg.description}</p>
               
               <div className="flex items-center text-himalaya-600 mb-4">
-                <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                <MapPin className="h-4 w-4 mr-1 flex-shrink-0 text-primary" />
                 <span className="text-sm truncate">{pkg.location}</span>
               </div>
 
@@ -119,8 +153,8 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
                   <h4 className="font-medium text-himalaya-800 mb-2">Package Includes:</h4>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {pkg.features.map((feature, index) => (
-                      <li key={index} className="text-xs sm:text-sm text-himalaya-600 flex items-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2 flex-shrink-0" />
+                      <li key={index} className="text-xs sm:text-sm text-himalaya-600 flex items-center group">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2 flex-shrink-0 group-hover:scale-125 transition-transform duration-300" />
                         <span className="line-clamp-1">{feature}</span>
                       </li>
                     ))}
@@ -136,11 +170,11 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
                     <Button
                       variant="outline"
                       onClick={() => setIsItineraryOpen(!isItineraryOpen)}
-                      className="w-full sm:w-auto gap-2 text-sm"
+                      className="w-full sm:w-auto gap-2 text-sm group"
                     >
                       View Itinerary
                       <ChevronDown className={cn(
-                        "h-4 w-4 transition-transform",
+                        "h-4 w-4 transition-transform duration-300",
                         isItineraryOpen && "rotate-180"
                       )} />
                     </Button>
@@ -153,13 +187,13 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
                     >
                       <Button 
                         variant="outline"
-                        className="w-full text-sm"
+                        className="w-full text-sm hover:bg-primary/5 transition-colors duration-300"
                       >
                         Get Details
                       </Button>
                     </Link>
                     <Button 
-                      className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm"
+                      className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm transform hover:scale-105 transition-all duration-300"
                       onClick={onBook}
                     >
                       Book Now
@@ -171,17 +205,24 @@ const PackageCard = memo(({ package: pkg, onBook, isHovered, onHover, onLeave }:
           </div>
 
           {/* Itinerary Section */}
-          {isItineraryOpen && itinerary && (
-            <div className="p-4 sm:p-6 border-t sm:border-t-0 sm:border-l">
-              <div className="mb-4">
-                <h3 className="text-lg sm:text-xl font-bold text-himalaya-800 mb-2">Day-by-Day Itinerary</h3>
-                <p className="text-sm sm:text-base text-himalaya-600">Detailed breakdown of your spiritual journey</p>
-              </div>
-              <PackageItinerary days={itinerary.days} />
-            </div>
-          )}
+          <AnimatePresence>
+            {isItineraryOpen && itinerary && (
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="p-4 sm:p-6 border-t sm:border-t-0 sm:border-l"
+              >
+                <div className="mb-4">
+                  <h3 className="text-lg sm:text-xl font-bold text-himalaya-800 mb-2">Day-by-Day Itinerary</h3>
+                  <p className="text-sm sm:text-base text-himalaya-600">Detailed breakdown of your spiritual journey</p>
+                </div>
+                <PackageItinerary days={itinerary.days} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 });

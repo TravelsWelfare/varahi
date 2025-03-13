@@ -1,101 +1,139 @@
-
-import { Helmet } from "react-helmet";
+import { useState, useEffect } from 'react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import PackagesSection from "@/components/PackagesSection";
-import CtaSection from "@/components/CtaSection";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { packages } from "@/data/packages";
+import PackageCard from "@/components/PackageCard";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import SEO from "@/components/SEO";
+
+// Define resources to prefetch for likely navigation from the packages page
+const prefetchResources = [
+  '/packages/1',
+  '/packages/2',
+  '/packages/3',
+  '/contact',
+  '/assets/package-details.js'
+];
+
+// Prefetch package details data
+const prefetchPackageDetails = () => {
+  // This would be implemented to prefetch package details data
+  // For example, you might prefetch the most popular package details
+  return import('@/data/packageItineraries');
+};
 
 const Packages = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredPackages, setFilteredPackages] = useState(packages);
+
+  // Filter packages based on search term
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredPackages(packages);
+    } else {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = packages.filter(pkg => 
+        pkg.title.toLowerCase().includes(lowercasedSearch) || 
+        pkg.location.toLowerCase().includes(lowercasedSearch) ||
+        pkg.description.toLowerCase().includes(lowercasedSearch)
+      );
+      setFilteredPackages(filtered);
+    }
+  }, [searchTerm]);
+
+  // Prefetch package details for popular packages
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      prefetchPackageDetails();
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen">
-      <Helmet>
-        <title>Best Char Dham Yatra Packages 2024 | Kedarnath & Badrinath Tours</title>
-        <meta 
-          name="description" 
-          content="Explore our Char Dham Yatra packages for 2024. VIP darshan at Kedarnath, Badrinath, Gangotri & Yamunotri. Helicopter services, comfortable stays & expert guides available." 
-        />
-        <meta name="keywords" content="Char Dham Yatra packages, Kedarnath tour package, Badrinath Yatra booking, Kedarnath helicopter booking, Budget Char Dham tour, Senior citizen Char Dham tour package" />
-        <link rel="canonical" href="https://Varahijourney.com/packages" />
-        <meta property="og:title" content="Best Char Dham Yatra Packages 2024 | Kedarnath & Badrinath Tours" />
-        <meta property="og:description" content="Explore our Char Dham Yatra packages for 2024. VIP darshan at Kedarnath, Badrinath, Gangotri & Yamunotri." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://Varahijourney.com/packages" />
-        <meta property="og:image" content="https://Varahijourney.com/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Best Char Dham Yatra Packages 2024 | Kedarnath & Badrinath Tours" />
-        <meta name="twitter:description" content="Explore our Char Dham Yatra packages for 2024. VIP darshan at Kedarnath, Badrinath, Gangotri & Yamunotri." />
-        <meta name="twitter:image" content="https://Varahijourney.com/og-image.png" />
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "ItemList",
-              "itemListElement": [
-                {
-                  "@type": "TouristTrip",
-                  "name": "Kedarnath Helicopter Package",
-                  "touristType": ["Pilgrimage", "Religious Tourism"],
-                  "description": "Experience the divine with our exclusive helicopter package to Kedarnath. Skip the trek and maximize your darshan time.",
-                  "offers": {
-                    "@type": "Offer",
-                    "price": "13999",
-                    "priceCurrency": "INR"
-                  },
-                  "itinerary": {
-                    "@type": "ItemList",
-                    "itemListElement": [
-                      {
-                        "@type": "ListItem",
-                        "position": 1,
-                        "item": {
-                          "@type": "TouristAttraction",
-                          "name": "Kedarnath Temple",
-                          "description": "Ancient Hindu temple dedicated to Lord Shiva"
-                        }
-                      }
-                    ]
-                  }
-                },
-                {
-                  "@type": "TouristTrip",
-                  "name": "Complete Char Dham Yatra",
-                  "touristType": ["Pilgrimage", "Religious Tourism"],
-                  "description": "Visit all four divine destinations - Yamunotri, Gangotri, Kedarnath, and Badrinath in one spiritual journey.",
-                  "offers": {
-                    "@type": "Offer",
-                    "price": "29999",
-                    "priceCurrency": "INR"
-                  }
+      <SEO 
+        title="Best Char Dham Yatra Packages 2024 | Kedarnath & Badrinath Tours"
+        description="Explore our range of Char Dham Yatra packages. Find the perfect pilgrimage package with comfortable accommodations, expert guides, and seamless travel arrangements."
+        keywords={["char dham packages", "kedarnath package", "badrinath package", "pilgrimage tour", "spiritual journey packages"]}
+        canonicalUrl="/packages"
+        prefetchResources={prefetchResources}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Char Dham Yatra Packages",
+          "description": "Explore our range of Char Dham Yatra packages with expert guides and comfortable accommodations.",
+          "url": "https://varahijourney.com/packages",
+          "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": packages.map((pkg, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "item": {
+                "@type": "Product",
+                "name": pkg.title,
+                "description": pkg.description,
+                "image": pkg.image,
+                "offers": {
+                  "@type": "Offer",
+                  "price": pkg.price.replace('₹', '').replace(',', ''),
+                  "priceCurrency": "INR"
                 }
-              ]
-            }
-          `}
-        </script>
-      </Helmet>
+              }
+            }))
+          }
+        }}
+      />
+      
       <Navbar />
-      <main>
-        <div className="relative pt-20 bg-himalaya-50">
-          <div className="absolute inset-0 opacity-55 z-0">
-            <div className="absolute inset-0" style={{ 
-              backgroundImage: `url("https://images.unsplash.com/photo-1539867462940-bc733134d96e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80")`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}></div>
-          </div>
-          <div className="container mx-auto px-4 py-12 relative z-10">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white text-center mb-6 text-shadow-lg">
-              Our Char Dham Yatra Packages
-            </h1>
-            <p className="text-center text-white text-lg md:text-xl max-w-3xl mx-auto mt-4 text-shadow font-medium hidden">
-              Choose from our carefully curated packages designed to provide you with a comfortable, 
-              spiritual, and memorable journey to the sacred Char Dham destinations.
+      
+      <main className="pt-20">
+        <div className="bg-gradient-to-r from-himalaya-50 to-himalaya-100 py-16">
+          <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-himalaya-800 mb-4">Char Dham Yatra Packages</h1>
+            <p className="text-xl text-himalaya-600 max-w-3xl mb-8">
+              Discover our carefully crafted pilgrimage packages designed to provide a seamless and spiritually enriching experience.
             </p>
+            
+            <div className="relative max-w-md">
+              <Input
+                type="text"
+                placeholder="Search packages by name or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border-himalaya-200 focus:border-primary focus:ring-primary"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-himalaya-400 h-5 w-5" />
+            </div>
           </div>
         </div>
-        <PackagesSection />
-        <CtaSection />
+        
+        <div className="container mx-auto px-4 py-12">
+          {filteredPackages.length === 0 ? (
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-semibold text-himalaya-700 mb-4">No packages found</h2>
+              <p className="text-himalaya-500 mb-6">We couldn't find any packages matching your search criteria.</p>
+              <Button 
+                variant="outline" 
+                onClick={() => setSearchTerm('')}
+                className="border-himalaya-300 text-himalaya-700 hover:bg-himalaya-50"
+              >
+                Clear Search
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredPackages.map((pkg) => (
+                <PackageCard key={pkg.id} package={pkg} />
+              ))}
+            </div>
+          )}
+        </div>
       </main>
+      
       <Footer />
       <WhatsAppButton />
     </div>

@@ -8,17 +8,18 @@ import { Link } from "react-router-dom";
 import { packages } from "@/data/packages";
 import { useBooking } from "@/context/BookingContext";
 import SEO from "@/components/SEO";
+import { motion } from "framer-motion";
 
 const PackageCard = lazy(() => import("./PackageCard"));
 
 const PackageCardSkeleton = memo(() => (
-  <div className="rounded-xl bg-white border border-himalaya-100 shadow-sm overflow-hidden">
+  <div className="rounded-xl bg-white border border-himalaya-100 shadow-sm overflow-hidden animate-pulse">
     <div className="aspect-[16/9] relative bg-himalaya-50" />
     <div className="p-6 space-y-4">
-      <div className="h-6 bg-himalaya-50 rounded" />
+      <div className="h-6 bg-himalaya-50 rounded w-3/4" />
       <div className="space-y-2">
-        <div className="h-4 bg-himalaya-50 rounded w-3/4" />
         <div className="h-4 bg-himalaya-50 rounded w-1/2" />
+        <div className="h-4 bg-himalaya-50 rounded w-2/3" />
       </div>
     </div>
   </div>
@@ -26,7 +27,6 @@ const PackageCardSkeleton = memo(() => (
 
 PackageCardSkeleton.displayName = 'PackageCardSkeleton';
 
-// Filter buttons component
 const FilterButtons = memo(({ 
   locations, 
   filterLocation, 
@@ -36,7 +36,11 @@ const FilterButtons = memo(({
   filterLocation: string | null; 
   onFilterChange: (location: string | null) => void;
 }) => (
-  <div className="flex flex-wrap justify-center gap-2 mb-8">
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="flex flex-wrap justify-center gap-2 mb-8"
+  >
     <Button 
       variant={filterLocation === null ? "default" : "outline"} 
       onClick={() => onFilterChange(null)}
@@ -54,7 +58,7 @@ const FilterButtons = memo(({
         {location}
       </Button>
     ))}
-  </div>
+  </motion.div>
 ));
 
 FilterButtons.displayName = 'FilterButtons';
@@ -65,13 +69,11 @@ const PackagesSection = () => {
   const { toast } = useToast();
   const { selectPackage } = useBooking();
 
-  // Extract unique locations for filtering
   const locations = useMemo(() => 
     Array.from(new Set(packages.map(pkg => pkg.location.split(', ')[0]))),
     []
   );
 
-  // Filter packages based on selected location
   const filteredPackages = useMemo(() => 
     filterLocation 
       ? packages.filter(pkg => pkg.location.includes(filterLocation)) 
@@ -79,7 +81,6 @@ const PackagesSection = () => {
     [filterLocation]
   );
 
-  // Generate structured data for packages list
   const structuredData = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -109,21 +110,17 @@ const PackagesSection = () => {
   }), []);
 
   const handleBookNow = useCallback((packageId: number) => {
-    // Find the package details
     const selectedPackage = packages.find(pkg => pkg.id === packageId);
     
     if (selectedPackage) {
-      // Update the context with selected package
       selectPackage(selectedPackage.id, selectedPackage.title, selectedPackage.price);
       
-      // Show toast notification
       toast({
         title: "Package Selected",
         description: `${selectedPackage.title} has been selected. Proceed to booking form to complete your reservation.`,
         duration: 5000,
       });
       
-      // Redirect to contact page with booking form
       window.location.href = `/contact?package=${packageId}`;
     }
   }, [selectPackage, toast]);
@@ -141,7 +138,7 @@ const PackagesSection = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
       <SEO
         title="Travel Packages | Varahi Journey"
         description="Choose from our carefully designed packages for a comfortable and spiritually fulfilling journey to the sacred Char Dham destinations."
@@ -151,7 +148,12 @@ const PackagesSection = () => {
       />
       
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-3xl mx-auto mb-12"
+        >
           <Badge variant="outline" className="mb-3 border-primary text-primary font-medium">
             Travel Packages
           </Badge>
@@ -167,32 +169,45 @@ const PackagesSection = () => {
             filterLocation={filterLocation} 
             onFilterChange={handleFilterChange} 
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-8">
+        </motion.div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-6 md:gap-8">
           {filteredPackages.map((pkg, index) => (
-            <Suspense key={pkg.id} fallback={<PackageCardSkeleton />}>
-              <PackageCard
-                package={pkg}
-                onBook={() => handleBookNow(pkg.id)}
-                isHovered={hoveredIndex === index}
-                onHover={() => handleHover(index)}
-                onLeave={handleLeave}
-              />
-            </Suspense>
+            <motion.div
+              key={pkg.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Suspense fallback={<PackageCardSkeleton />}>
+                <PackageCard
+                  package={pkg}
+                  onBook={() => handleBookNow(pkg.id)}
+                  isHovered={hoveredIndex === index}
+                  onHover={() => handleHover(index)}
+                  onLeave={handleLeave}
+                />
+              </Suspense>
+            </motion.div>
           ))}
         </div>
         
-        <div className="mt-12 text-center">
-          <p className="text-himalaya-700 mb-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-16 text-center"
+        >
+          <p className="text-himalaya-700 mb-6">
             Looking for something specific? Get in touch for a custom plan tailored to your needs.
           </p>
           <Link to="/contact">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground transform hover:scale-105 transition-all duration-300">
               Contact Us <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

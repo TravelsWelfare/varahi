@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { deferThirdPartyLoad } from "@/lib/utils";
 import { BookingProvider } from "@/context/BookingContext";
 import { ThemeProvider } from "next-themes";
+import { Helmet } from "react-helmet";
 
 // Import ChatDialog normally to avoid type issues with lazy loading
 import { ChatDialog } from "@/components/ChatDialog";
@@ -89,6 +90,33 @@ const registerServiceWorker = async () => {
   }
 };
 
+// Prefetch critical resources based on current route
+const prefetchResourcesForRoute = (currentPath: string) => {
+  // Define resources to prefetch based on current route
+  const resourceMap: Record<string, string[]> = {
+    '/': ['/packages', '/about', '/contact'],
+    '/packages': ['/packages/1', '/packages/2', '/contact'],
+    '/about': ['/contact', '/packages'],
+    '/contact': ['/packages', '/about'],
+    '/blog': ['/blog/char-dham-yatra-guide', '/blog/kedarnath-journey'],
+  };
+
+  return resourceMap[currentPath] || [];
+};
+
+// Preload critical JavaScript chunks
+const preloadCriticalChunks = () => {
+  // Create link elements for critical JS chunks
+  const criticalChunks = [
+    '/assets/home.js',
+    '/assets/packages.js',
+  ];
+
+  return criticalChunks.map((chunk, index) => (
+    <link key={`preload-chunk-${index}`} rel="preload" href={chunk} as="script" />
+  ));
+};
+
 const App = () => {
   useEffect(() => {
     // Register service worker
@@ -104,7 +132,8 @@ const App = () => {
     const preloadCriticalImages = () => {
       const criticalImages = [
         '/images/hero-bg.jpg',
-        '/images/logo.png'
+        '/images/logo.png',
+        '/earth-blue-marble.jpg'
       ];
       
       criticalImages.forEach(src => {
@@ -124,6 +153,28 @@ const App = () => {
       <ThemeProvider attribute="class" defaultTheme="light">
         <BookingProvider>
           <TooltipProvider>
+            <Helmet>
+              {/* Global Resource Hints */}
+              <link rel="preconnect" href="https://fonts.googleapis.com" />
+              <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+              <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+              <link rel="preconnect" href="https://unpkg.com" />
+              
+              {/* DNS Prefetching */}
+              <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+              <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+              <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+              
+              {/* Preload critical fonts */}
+              <link 
+                rel="preload" 
+                href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" 
+                as="style" 
+              />
+              
+              {/* Preload critical chunks */}
+              {preloadCriticalChunks()}
+            </Helmet>
             <Toaster />
             <Sonner />
             <BrowserRouter>

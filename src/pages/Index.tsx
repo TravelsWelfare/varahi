@@ -8,6 +8,7 @@ import { WorldMap } from "@/components/ui/world-map";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Globe as GlobeIcon } from "lucide-react";
 import { Globe } from "@/components/ui/globe";
+import SEO from "@/components/SEO";
 
 // Lazy load heavy components
 const HeroSection = lazy(() => import("@/components/HeroSection"));
@@ -16,6 +17,16 @@ const SpecialOffers = lazy(() => import("@/components/SpecialOffers"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const WhyChooseUsSection = lazy(() => import("@/components/WhyChooseUsSection"));
 const CtaSection = lazy(() => import("@/components/CtaSection"));
+
+// Define resources to prefetch for likely navigation from the homepage
+const prefetchResources = [
+  '/packages',
+  '/about',
+  '/contact',
+  '/assets/packages.js',
+  '/assets/about.js',
+  '/assets/contact.js'
+];
 
 const SectionLoader = () => (
   <div className="container mx-auto px-4 py-8">
@@ -76,6 +87,27 @@ const Index = () => {
     };
   }, []);
 
+  // Prefetch likely navigation paths
+  useEffect(() => {
+    // Prefetch packages data after initial render
+    const prefetchPackagesData = async () => {
+      try {
+        // This simulates prefetching data that would be needed on the packages page
+        const { packages } = await import('@/data/packages');
+        // You could store this in a cache or context if needed
+      } catch (error) {
+        console.error('Failed to prefetch packages data:', error);
+      }
+    };
+
+    // Wait until the main content has loaded before prefetching
+    const timer = setTimeout(() => {
+      prefetchPackagesData();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Simple globe configuration
   const globeConfig = {
     width: isMobile ? 300 : 500,
@@ -111,40 +143,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full p-0 m-0">
-      <Helmet>
-        <title>Varahi journey - Your Trusted Char Dham Yatra Partner</title>
-        <meta 
-          name="description" 
-          content="Experience a spiritual journey with our expertly crafted Char Dham Yatra packages. Professional guides, comfortable accommodation, and seamless travel arrangements." 
-        />
-        <link rel="preload" href="/earth-blue-marble.jpg" as="image" />
-        <meta name="keywords" content="char dham yatra, kedarnath, badrinath, gangotri, yamunotri, pilgrimage packages, spiritual journey" />
-        <link rel="canonical" href="https://Varahijourney.com" />
-        <meta property="og:title" content="Varahi journey - Char Dham Yatra Specialists" />
-        <meta property="og:description" content="Experience a spiritual journey with our expertly crafted Char Dham Yatra packages." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://Varahijourney.com" />
-        <meta property="og:image" content="/og-image.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Varahi journey - Your Trusted Char Dham Yatra Partner" />
-        <meta name="twitter:description" content="Experience a spiritual journey with our expertly crafted Char Dham Yatra packages. Professional guides, comfortable accommodation, and seamless travel arrangements." />
-        <meta name="twitter:image" content="/og-image.png" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "TravelAgency",
-            "name": "Varahi journey",
-            "description": "Expert Char Dham Yatra travel services",
-            "url": "https://Varahijourney.com",
-            "image": "/og-image.png",
-            "address": {
-              "@type": "PostalAddress",
-              "addressCountry": "IN"
-            },
-            "priceRange": "₹₹₹"
-          })}
-        </script>
-      </Helmet>
+      <SEO 
+        title="Varahi journey - Your Trusted Char Dham Yatra Partner"
+        description="Experience a spiritual journey with our expertly crafted Char Dham Yatra packages. Professional guides, comfortable accommodation, and seamless travel arrangements."
+        keywords={["char dham yatra", "kedarnath", "badrinath", "gangotri", "yamunotri", "pilgrimage packages", "spiritual journey"]}
+        canonicalUrl="/"
+        prefetchResources={prefetchResources}
+      />
+      
       <Navbar />
       <main>
         <Suspense fallback={<SectionLoader />}>
